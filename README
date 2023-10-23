@@ -1,0 +1,6 @@
+- Add a .env with values:
+  - CONNECTION_STRING (for msql db connection)
+  - API_URL (for api url)
+- Have golang installed (https://go.dev/dl/)
+- In root directory run "go run ."
+- Run one of the presented commands
