@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"paymates-mock-db-updater/checkError"
+	"paymates-mock-db-updater/src/check_error"
 )
 
 type User struct {
@@ -20,18 +20,18 @@ var usersList = []string{"Zac", "Amy", "Luke", "Justin", "Migs", "Micah", "Jade"
 
 func TruncateUsers(db *sql.DB) {
 	_, err := db.Exec(`Truncate table Users`)
-	checkError.ErrCheck(err)
+	check_error.ErrCheck(err)
 }
 
 func GetAllUsers(db *sql.DB) {
 	fmt.Println("Getting users")
 	users, err := db.Query("SELECT * FROM Users")
-	checkError.ErrCheck(err)
+	check_error.ErrCheck(err)
 	println("USERS:")
 	for users.Next() {
 		var user User
 		err = users.Scan(&user.Uid, &user.FirstName, &user.LastName, &user.Email, &user.PhotoUrl, &user.Username)
-		checkError.ErrCheck(err)
+		check_error.ErrCheck(err)
 		fmt.Println(user.Uid, " ", user.FirstName, " ", user.LastName, " ", user.Email, " ", user.Username)
 	}
 }
@@ -42,6 +42,6 @@ func CreateUserMocks(db *sql.DB) {
 		mockVal := "testing" + indexStr
 		_, err := db.Exec(`Insert Into Users ( Uid, FirstName, LastName, Email, PhotoUrl, Username)
         values ( ?, ?, ?, ?, ?, ?)`, mockVal, user, user, mockVal+"@test.com", mockVal, mockVal)
-		checkError.ErrCheck(err)
+		check_error.ErrCheck(err)
 	}
 }

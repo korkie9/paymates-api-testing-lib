@@ -1,4 +1,4 @@
-package checkError
+package check_error
 
 import (
 	"fmt"
