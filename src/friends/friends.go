@@ -32,6 +32,16 @@ func GetAllFriends(db *sql.DB) {
 	}
 }
 
+func GetUserFriends(db *sql.DB) {
+	requestBody := map[string]string{}
+	token := auth.GetAccessToken()
+	res, err, _ := reqres.HttpRequest("GET", requestBody, "Friends/get-friends", token)
+	check_error.ErrCheck(err)
+	resStr := string(res)
+	fmt.Println("Friend Response: ", resStr)
+
+}
+
 func CreateFriendsMocks(db *sql.DB) {
 	friendOne := "testing2"
 	for index := range usersList {
@@ -58,6 +68,20 @@ func AddFriend(db *sql.DB) {
 	check_error.ErrCheck(err)
 	resStr := string(res)
 	fmt.Println("Friend Response: ", resStr)
+}
+
+func DeleteFriend(db *sql.DB) {
+	fmt.Println("Enter the uid of the friend you'd like to Delete...")
+	friendUid, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	requestBody := map[string]string{
+		"FriendUid": friendUid,
+	}
+	token := auth.GetAccessToken()
+	res, err, _ := reqres.HttpRequest("DELETE", requestBody, "Friends/remove-friend", token)
+	check_error.ErrCheck(err)
+	resStr := string(res)
+	fmt.Println("Delete Friend Response: ", resStr)
 }
 
 func TruncateFriends(db *sql.DB) {

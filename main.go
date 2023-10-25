@@ -63,7 +63,7 @@ func main() {
 		case "get access token":
 			var accessToken = auth.GetAccessToken()
 			fmt.Println("access token: ", accessToken)
-		case "get friends":
+		case "get all friends in db":
 			friends.GetAllFriends(db)
 		case "add friend":
 			friends.AddFriend(db)
@@ -71,6 +71,10 @@ func main() {
 			friends.CreateFriendsMocks(db)
 		case "truncate friends":
 			friends.TruncateFriends(db)
+		case "delete friend":
+			friends.DeleteFriend(db)
+		case "get user friends":
+			friends.GetUserFriends(db)
 		case "test auth":
 			auth.TestAPI()
 		default:
@@ -85,7 +89,7 @@ func printAvailibleCommands() {
 	fmt.Println("==========================================")
 	fmt.Println("get users; truncate users; create mock users; register multiple mock users; get number of users")
 	fmt.Println("get refresh token; get access token;")
-	fmt.Println("get friends; create mock friends; add friend; truncate friends;")
+	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend")
 	fmt.Println("==========================================")
 }
 
