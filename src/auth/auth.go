@@ -1,16 +1,14 @@
 package auth
 
 import (
-	"bufio"
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"os"
 	"paymates-mock-db-updater/src/check_error"
 	reqres "paymates-mock-db-updater/src/httpRequest"
+	util "paymates-mock-db-updater/src/util/get_input"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 type AuthUser struct {
@@ -25,7 +23,7 @@ type AuthUser struct {
 }
 
 func GetAccessToken() string {
-	var user AuthUser = loginAndGetUser()
+	var user AuthUser = loginAndGetMockUser()
 
 	requestBody := map[string]string{
 		"uid":                user.Uid,
@@ -45,10 +43,10 @@ func GetRefreshToken() string {
 	return "hello access token"
 }
 
-func loginAndGetUser() AuthUser {
+func loginAndGetMockUser() AuthUser {
 	var user AuthUser
 	requestBody := map[string]string{
-		"username": "string",
+		"username": "string0",
 		"password": "string",
 	}
 	res, err, _ := reqres.HttpRequest("POST", requestBody, "Auth/login", "")
@@ -96,11 +94,9 @@ func RegisterMultipleMockUsers(db *sql.DB) {
 	fmt.Println("How many mock users would you like to add")
 	//Read input
 	var amount int
-	reader := bufio.NewReader(os.Stdin)
 	for {
-		input, err := reader.ReadString('\n')
+		input, err := util.GetUserInput()
 		check_error.ErrCheck(err)
-		input = strings.TrimSpace(input)
 		//check if input matches an int value
 		numberreg := regexp.MustCompile(`\d`)
 		if !numberreg.MatchString(input) {

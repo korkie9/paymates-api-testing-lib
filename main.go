@@ -46,10 +46,12 @@ func main() {
 		check_error.ErrCheck(err)
 		input = strings.TrimSpace(input)
 		switch input {
-		case "clear users":
+		case "truncate users":
 			users.TruncateUsers(db)
 		case "get users":
 			users.GetAllUsers(db)
+		case "get number of users":
+			users.GetNumberOfUsers(db)
 		case "create mock users":
 			users.GetAllUsers(db)
 		case "register mock user":
@@ -64,9 +66,11 @@ func main() {
 		case "get friends":
 			friends.GetAllFriends(db)
 		case "add friend":
-			friends.AddFriend(db, "b4cce400-afd3-4a83-8f47-184d456cacb9")
+			friends.AddFriend(db)
 		case "create mock friends":
 			friends.CreateFriendsMocks(db)
+		case "truncate friends":
+			friends.TruncateFriends(db)
 		case "test auth":
 			auth.TestAPI()
 		default:
@@ -79,9 +83,9 @@ func main() {
 func printAvailibleCommands() {
 	fmt.Println("AVAILIBLE COMMANDS:")
 	fmt.Println("==========================================")
-	fmt.Println("get users; clear users; create mock users; register multiple mock users")
+	fmt.Println("get users; truncate users; create mock users; register multiple mock users; get number of users")
 	fmt.Println("get refresh token; get access token;")
-	fmt.Println("get friends; create mock friends; add friend;")
+	fmt.Println("get friends; create mock friends; add friend; truncate friends;")
 	fmt.Println("==========================================")
 }
 

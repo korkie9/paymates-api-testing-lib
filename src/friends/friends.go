@@ -3,10 +3,13 @@ package friends
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"paymates-mock-db-updater/src/auth"
 	"paymates-mock-db-updater/src/check_error"
 	reqres "paymates-mock-db-updater/src/httpRequest"
+	util "paymates-mock-db-updater/src/util/get_input"
+	truncate "paymates-mock-db-updater/src/util/truncate"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Friend struct {
@@ -43,7 +46,10 @@ func CreateFriendsMocks(db *sql.DB) {
 	}
 }
 
-func AddFriend(db *sql.DB, friendUid string) {
+func AddFriend(db *sql.DB) {
+	fmt.Println("Enter the uid of the friend you'd like to add...")
+	friendUid, err := util.GetUserInput()
+	check_error.ErrCheck(err)
 	requestBody := map[string]string{
 		"friendUid": friendUid,
 	}
@@ -52,4 +58,9 @@ func AddFriend(db *sql.DB, friendUid string) {
 	check_error.ErrCheck(err)
 	resStr := string(res)
 	fmt.Println("Friend Response: ", resStr)
+}
+
+func TruncateFriends(db *sql.DB) {
+	_, err := truncate.Truncate(db, "Friends")
+	check_error.ErrCheck(err)
 }

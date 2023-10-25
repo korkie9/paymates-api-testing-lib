@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"paymates-mock-db-updater/src/check_error"
+	truncate "paymates-mock-db-updater/src/util/truncate"
 )
 
 type User struct {
@@ -19,7 +20,7 @@ type User struct {
 var usersList = []string{"Zac", "Amy", "Luke", "Justin", "Migs", "Micah", "Jade", "Aiden", "Frans"}
 
 func TruncateUsers(db *sql.DB) {
-	_, err := db.Exec(`Truncate table Users`)
+	_, err := truncate.Truncate(db, "Users")
 	check_error.ErrCheck(err)
 }
 
@@ -44,4 +45,15 @@ func CreateUserMocks(db *sql.DB) {
         values ( ?, ?, ?, ?, ?, ?)`, mockVal, user, user, mockVal+"@test.com", mockVal, mockVal)
 		check_error.ErrCheck(err)
 	}
+}
+
+func GetNumberOfUsers(db *sql.DB) int {
+	fmt.Println("Getting amount users")
+	var err error
+	query := "SELECT COUNT(*) FROM Users"
+	var rowCount int
+	err = db.QueryRow(query).Scan(&rowCount)
+	check_error.ErrCheck(err)
+	fmt.Printf("Number of rows in the Users table: %d\n", rowCount)
+	return rowCount
 }
