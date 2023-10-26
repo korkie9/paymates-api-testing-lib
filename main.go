@@ -77,6 +77,8 @@ func main() {
 			friends.GetUserFriends(db)
 		case "test auth":
 			auth.TestAPI()
+		case "help":
+			printAvailibleCommands()
 		default:
 			fmt.Println("OOPS!! ", input, " is not an avaiible command")
 			printAvailibleCommands()

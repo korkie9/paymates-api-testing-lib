@@ -9,12 +9,15 @@ import (
 )
 
 type User struct {
-	Uid       string `json:"uid"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	PhotoUrl  string `json:"photoUrl"`
-	Username  string `json:"username"`
+	Uid                string `json:"uid"`
+	FirstName          string `json:"firstName"`
+	LastName           string `json:"lastName"`
+	Email              string `json:"email"`
+	PhotoUrl           string `json:"photoUrl"`
+	Username           string `json:"username"`
+	RefreshToken       string `json:"refreshToken"`
+	RefreshTokenExpiry string `json:"refreshTokenExpiry"`
+	Password           string `json:"Password"`
 }
 
 var usersList = []string{"Zac", "Amy", "Luke", "Justin", "Migs", "Micah", "Jade", "Aiden", "Frans"}
@@ -31,9 +34,9 @@ func GetAllUsers(db *sql.DB) {
 	println("USERS:")
 	for users.Next() {
 		var user User
-		err = users.Scan(&user.Uid, &user.FirstName, &user.LastName, &user.Email, &user.PhotoUrl, &user.Username)
+		err = users.Scan(&user.Uid, &user.FirstName, &user.LastName, &user.Email, &user.PhotoUrl, &user.Username, &user.RefreshToken, &user.RefreshTokenExpiry, &user.Password)
 		check_error.ErrCheck(err)
-		fmt.Println(user.Uid, " ", user.FirstName, " ", user.LastName, " ", user.Email, " ", user.Username)
+		fmt.Println(user.Uid, " ", user.FirstName, " ", user.LastName, " ", user.Email, " ", user.Username, " ", user.Password)
 	}
 }
 
