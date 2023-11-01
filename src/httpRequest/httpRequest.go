@@ -11,7 +11,7 @@ import (
 	"paymates-mock-db-updater/src/util/env"
 )
 
-func HttpRequest(requesttype string, requestbody map[string]string, path string, authorizationheader string) ([]byte, error, string) {
+func HttpRequest(requesttype string, requestbody map[string]interface{}, path string, authorizationheader string) ([]byte, error, string) {
 	// reqTypeIsValid := false
 	// types := [4]string{"POST", "PUT", "GET", "DELETE"}
 	// for _, reqType := range types {

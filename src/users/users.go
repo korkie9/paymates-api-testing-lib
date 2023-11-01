@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"paymates-mock-db-updater/src/auth"
 	"paymates-mock-db-updater/src/check_error"
+	reqres "paymates-mock-db-updater/src/httpRequest"
+	util "paymates-mock-db-updater/src/util/get_input"
 	truncate "paymates-mock-db-updater/src/util/truncate"
 )
 
@@ -59,4 +62,27 @@ func GetNumberOfUsers(db *sql.DB) int {
 	check_error.ErrCheck(err)
 	fmt.Printf("Number of rows in the Users table: %d\n", rowCount)
 	return rowCount
+}
+
+func GetUser() {
+	fmt.Println("Enter the uid of the user you'd like to Find...")
+	userId, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	requestBody := map[string]interface{}{
+		"uid": userId,
+	}
+	token := auth.GetAccessToken()
+	res, err, _ := reqres.HttpRequest("POST", requestBody, "User/get-user", token)
+	check_error.ErrCheck(err)
+	resStr := string(res)
+	fmt.Println("Get Friend Response: ", resStr)
+}
+
+func Test() {
+	requestBody := map[string]interface{}{}
+	token := auth.GetAccessToken()
+	res, err, _ := reqres.HttpRequest("POST", requestBody, "User/get-user", token)
+	check_error.ErrCheck(err)
+	resStr := string(res)
+	fmt.Println("Test Friend Response: ", resStr)
 }

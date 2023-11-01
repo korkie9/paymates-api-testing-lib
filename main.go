@@ -8,6 +8,7 @@ import (
 	"paymates-mock-db-updater/src/auth"
 	"paymates-mock-db-updater/src/check_error"
 	"paymates-mock-db-updater/src/friends"
+	"paymates-mock-db-updater/src/transactions"
 	"paymates-mock-db-updater/src/users"
 	"paymates-mock-db-updater/src/util/env"
 	"strings"
@@ -67,6 +68,8 @@ func main() {
 			friends.GetAllFriends(db)
 		case "add friend":
 			friends.AddFriend(db)
+		case "add multiple friends":
+			friends.AddMultipleFriends()
 		case "create mock friends":
 			friends.CreateFriendsMocks(db)
 		case "truncate friends":
@@ -79,6 +82,12 @@ func main() {
 			auth.TestAPI()
 		case "help":
 			printAvailibleCommands()
+		case "get user":
+			users.GetUser()
+		case "create transaction":
+			transactions.CreateTransAction()
+		case "login user":
+			auth.LoginAndGetMockUser()
 		default:
 			fmt.Println("OOPS!! ", input, " is not an avaiible command")
 			printAvailibleCommands()
@@ -91,7 +100,8 @@ func printAvailibleCommands() {
 	fmt.Println("==========================================")
 	fmt.Println("get users; truncate users; create mock users; register multiple mock users; get number of users")
 	fmt.Println("get refresh token; get access token;")
-	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend")
+	fmt.Println("create transaction;")
+	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend; get user friends")
 	fmt.Println("==========================================")
 }
 

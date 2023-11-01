@@ -23,9 +23,9 @@ type AuthUser struct {
 }
 
 func GetAccessToken() string {
-	var user AuthUser = loginAndGetMockUser()
+	var user AuthUser = LoginAndGetMockUser()
 
-	requestBody := map[string]string{
+	requestBody := map[string]interface{}{
 		"uid":                user.Uid,
 		"refreshToken":       user.RefreshToken,
 		"refreshTokenExpiry": user.RefreshTokenExpiry,
@@ -43,9 +43,9 @@ func GetRefreshToken() string {
 	return "hello access token"
 }
 
-func loginAndGetMockUser() AuthUser {
+func LoginAndGetMockUser() AuthUser {
 	var user AuthUser
-	requestBody := map[string]string{
+	requestBody := map[string]interface{}{
 		"username": "string0",
 		"password": "string",
 	}
@@ -58,7 +58,7 @@ func loginAndGetMockUser() AuthUser {
 
 func TestAPI() {
 	var accessToken string = GetAccessToken()
-	requestBody := map[string]string{}
+	requestBody := map[string]interface{}{}
 	res, err, _ := reqres.HttpRequest("GET", requestBody, "Auth/test/", accessToken)
 	check_error.ErrCheck(err)
 	testString := string(res)
@@ -73,7 +73,7 @@ func RegisterMockUser(db *sql.DB) AuthUser {
 	mockEmail := "test" + strconv.Itoa(count) + "@test.com"
 	mockUsername := "string" + strconv.Itoa(count)
 	var user AuthUser
-	requestBody := map[string]string{
+	requestBody := map[string]interface{}{
 		"email":     mockEmail,
 		"photoUrl":  "string",
 		"username":  mockUsername,
