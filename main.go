@@ -19,17 +19,6 @@ import (
 var db *sql.DB
 var err error
 
-type User struct {
-	Uid                string `json:"uid"`
-	FirstName          string `json:"firstName"`
-	LastName           string `json:"lastName"`
-	Email              string `json:"email"`
-	PhotoUrl           string `json:"photoUrl"`
-	Username           string `json:"username"`
-	RefreshToken       string `json:"refreshToken"`
-	RefreshTokenExpiry string `json:"refreshTokenExpiry"`
-}
-
 func main() {
 	connectionstring := util.DotEnvVariable("CONNECTION_STRING")
 	//open sql connection
@@ -88,6 +77,10 @@ func main() {
 			transactions.CreateTransAction()
 		case "login user":
 			auth.LoginAndGetMockUser()
+		case "get all transactions from db":
+			transactions.GetAllTransactions(db)
+		case "delete transaction":
+			transactions.DeleteTransAction()
 		default:
 			fmt.Println("OOPS!! ", input, " is not an avaiible command")
 			printAvailibleCommands()
@@ -100,14 +93,7 @@ func printAvailibleCommands() {
 	fmt.Println("==========================================")
 	fmt.Println("get users; truncate users; create mock users; register multiple mock users; get number of users")
 	fmt.Println("get refresh token; get access token;")
-	fmt.Println("create transaction;")
+	fmt.Println("create transaction; get all transactions from db; delete transaction")
 	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend; get user friends")
 	fmt.Println("==========================================")
 }
-
-//Later for getting friend data
-// SELECT U2.*
-// FROM Users AS U1
-// INNER JOIN Friends AS F ON U1.Uid = F.FriendOneUid
-// INNER JOIN Users AS U2 ON U2.Uid = F.FriendTwoUid
-// WHERE U1.Uid = 'testing1';

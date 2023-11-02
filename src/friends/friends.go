@@ -13,6 +13,7 @@ import (
 )
 
 type Friend struct {
+	FriendId     string    `json:"friendId"`
 	FriendOneUid string `json:"friendOneUid"`
 	FriendTwoUid string `json:"friendTwoUid"`
 }
@@ -25,10 +26,10 @@ func GetAllFriends(db *sql.DB) {
 	println("FRIENDS:")
 	for users.Next() {
 		var friend Friend
-		err = users.Scan(&friend.FriendOneUid, &friend.FriendTwoUid)
+		err = users.Scan(&friend.FriendId, &friend.FriendOneUid, &friend.FriendTwoUid)
 		check_error.ErrCheck(err)
 
-		fmt.Println(friend.FriendOneUid, " ", friend.FriendTwoUid)
+		fmt.Println(friend.FriendId, ' ', friend.FriendOneUid, " ", friend.FriendTwoUid)
 	}
 }
 

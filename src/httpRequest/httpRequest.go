@@ -12,16 +12,6 @@ import (
 )
 
 func HttpRequest(requesttype string, requestbody map[string]interface{}, path string, authorizationheader string) ([]byte, error, string) {
-	// reqTypeIsValid := false
-	// types := [4]string{"POST", "PUT", "GET", "DELETE"}
-	// for _, reqType := range types {
-	// 	if reqType == requesttype {
-	// 		reqTypeIsValid = true
-	// 	}
-	// }
-	// if reqTypeIsValid == false {
-	// 	return nil, errors.New("sc"), ""
-	// }
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
