@@ -3,12 +3,13 @@ package users
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"paymates-mock-db-updater/src/auth"
 	"paymates-mock-db-updater/src/check_error"
 	reqres "paymates-mock-db-updater/src/httpRequest"
 	util "paymates-mock-db-updater/src/util/get_input"
 	truncate "paymates-mock-db-updater/src/util/truncate"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type User struct {
@@ -21,6 +22,7 @@ type User struct {
 	RefreshToken       string `json:"refreshToken"`
 	RefreshTokenExpiry string `json:"refreshTokenExpiry"`
 	Password           string `json:"Password"`
+	Verified           string `json:"Verified"`
 }
 
 var usersList = []string{"Zac", "Amy", "Luke", "Justin", "Migs", "Micah", "Jade", "Aiden", "Frans"}
@@ -32,14 +34,14 @@ func TruncateUsers(db *sql.DB) {
 
 func GetAllUsers(db *sql.DB) {
 	fmt.Println("Getting users")
-	users, err := db.Query("SELECT * FROM Users")
+	users, err := db.Query("SELECT * FROM paymates.Users")
 	check_error.ErrCheck(err)
 	println("USERS:")
 	for users.Next() {
 		var user User
-		err = users.Scan(&user.Uid, &user.FirstName, &user.LastName, &user.Email, &user.PhotoUrl, &user.Username, &user.RefreshToken, &user.RefreshTokenExpiry, &user.Password)
+		err = users.Scan(&user.Uid, &user.FirstName, &user.LastName, &user.Email, &user.PhotoUrl, &user.Username, &user.RefreshToken, &user.RefreshTokenExpiry, &user.Password, &user.Verified)
 		check_error.ErrCheck(err)
-		fmt.Println(user.Uid, " ", user.FirstName, " ", user.LastName, " ", user.Email, " ", user.Username, " ", user.Password)
+		fmt.Println(user) //, " ", user.FirstName, " ", user.LastName, " ", user.Email, " ", user.Username, " ", user.Password, " ", user.RefreshToken)
 	}
 }
 

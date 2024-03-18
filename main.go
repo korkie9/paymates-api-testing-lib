@@ -10,28 +10,30 @@ import (
 	"paymates-mock-db-updater/src/friends"
 	"paymates-mock-db-updater/src/transactions"
 	"paymates-mock-db-updater/src/users"
-	"paymates-mock-db-updater/src/util/env"
+	util "paymates-mock-db-updater/src/util/env"
 	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
-var err error
+var (
+	db  *sql.DB
+	err error
+)
 
 func main() {
 	connectionstring := util.DotEnvVariable("CONNECTION_STRING")
-	//open sql connection
+	// open sql connection
 	db, err = sql.Open("mysql", connectionstring)
 	check_error.ErrCheck(err)
 	err = db.Ping()
 	check_error.ErrCheck(err)
 	fmt.Println("Connected to db")
-	//Get user input command
+	// Get user input command
 	reader := bufio.NewReader(os.Stdin)
 	printAvailibleCommands()
 	for {
-		//perforn function based on user input command
+		// perforn function based on user input command
 		input, err := reader.ReadString('\n')
 		check_error.ErrCheck(err)
 		input = strings.TrimSpace(input)
@@ -44,19 +46,19 @@ func main() {
 			users.GetNumberOfUsers(db)
 		case "create mock users":
 			users.GetAllUsers(db)
-		case "register mock user":
-			auth.RegisterMockUser(db)
+		case "register user":
+			auth.RegisterUser()
 		case "register multiple mock users":
 			auth.RegisterMultipleMockUsers(db)
 		case "get refresh token":
 			auth.GetRefreshToken()
 		case "get access token":
-			var accessToken = auth.GetAccessToken()
+			accessToken := auth.GetAccessToken()
 			fmt.Println("access token: ", accessToken)
 		case "get all friends in db":
 			friends.GetAllFriends(db)
 		case "add friend":
-			friends.AddFriend(db)
+			friends.AddFriend()
 		case "add multiple friends":
 			friends.AddMultipleFriends()
 		case "create mock friends":
@@ -67,12 +69,16 @@ func main() {
 			friends.DeleteFriend(db)
 		case "get user friends":
 			friends.GetUserFriends(db)
+		case "find friend":
+			friends.FindFriend()
 		case "test auth":
 			auth.TestAPI()
 		case "help":
 			printAvailibleCommands()
 		case "get user":
 			users.GetUser()
+		case "create user":
+			auth.CreateUser()
 		case "create transaction":
 			transactions.CreateTransAction()
 		case "login user":
@@ -91,9 +97,10 @@ func main() {
 func printAvailibleCommands() {
 	fmt.Println("AVAILIBLE COMMANDS:")
 	fmt.Println("==========================================")
-	fmt.Println("get users; truncate users; create mock users; register multiple mock users; get number of users")
-	fmt.Println("get refresh token; get access token;")
+	fmt.Println("get users; truncate users; create mock users; register multiple mock users; register user; get number of users; login user")
+	fmt.Println("get refresh token; get access token; create user")
 	fmt.Println("create transaction; get all transactions from db; delete transaction")
-	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend; get user friends")
+	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend; get user friends; find friend")
 	fmt.Println("==========================================")
 }
+

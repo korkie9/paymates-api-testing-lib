@@ -13,9 +13,9 @@ import (
 )
 
 type Friend struct {
-	FriendId     string    `json:"friendId"`
-	FriendOneUid string `json:"friendOneUid"`
-	FriendTwoUid string `json:"friendTwoUid"`
+	FriendId          string `json:"friendId"`
+	FriendOneUsername string `json:"friendOneUsername"`
+	FriendTwoUsername string `json:"friendTwoUsername"`
 }
 
 var usersList = []string{"Zac", "Amy", "Luke", "Justin", "Migs", "Micah", "Jade", "Aiden", "Frans"}
@@ -26,10 +26,10 @@ func GetAllFriends(db *sql.DB) {
 	println("FRIENDS:")
 	for users.Next() {
 		var friend Friend
-		err = users.Scan(&friend.FriendId, &friend.FriendOneUid, &friend.FriendTwoUid)
+		err = users.Scan(&friend.FriendId, &friend.FriendOneUsername, &friend.FriendTwoUsername)
 		check_error.ErrCheck(err)
 
-		fmt.Println(friend.FriendId, ' ', friend.FriendOneUid, " ", friend.FriendTwoUid)
+		fmt.Println(friend.FriendId, ' ', friend.FriendOneUsername, " ", friend.FriendTwoUsername)
 	}
 }
 
@@ -40,7 +40,20 @@ func GetUserFriends(db *sql.DB) {
 	check_error.ErrCheck(err)
 	resStr := string(res)
 	fmt.Println("Friend Response: ", resStr)
+}
 
+func FindFriend() {
+	fmt.Println("Enter friend username")
+	username, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	requestBody := map[string]interface{}{
+		"friendUsername": username,
+	}
+	token := auth.GetAccessToken()
+	res, err, _ := reqres.HttpRequest("POST", requestBody, "Friends/find-friend", token)
+	check_error.ErrCheck(err)
+	resStr := string(res)
+	fmt.Println("Friend Response: ", resStr)
 }
 
 func CreateFriendsMocks(db *sql.DB) {
@@ -57,12 +70,16 @@ func CreateFriendsMocks(db *sql.DB) {
 	}
 }
 
-func AddFriend(db *sql.DB) {
-	fmt.Println("Enter the uid of the friend you'd like to add...")
-	friendUid, err := util.GetUserInput()
+func AddFriend() {
+	fmt.Println("Enter username")
+	username, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	fmt.Println("Enter the username of the friend you'd like to add...")
+	friendUsername, err := util.GetUserInput()
 	check_error.ErrCheck(err)
 	requestBody := map[string]interface{}{
-		"friendUid": friendUid,
+		"friendUsername": friendUsername,
+		"username":       username,
 	}
 	token := auth.GetAccessToken()
 	res, err, _ := reqres.HttpRequest("POST", requestBody, "Friends/add-friend", token)

@@ -22,20 +22,27 @@ type AuthUser struct {
 	RefreshTokenExpiry string `json:"refreshTokenExpiry"`
 }
 
+type BaseResponse[T any] struct {
+	Data  T      `json:"data"`
+	Error string `json:"error"`
+}
+
+// TODO: Adjust for base url
 func GetAccessToken() string {
-	var user AuthUser = LoginAndGetMockUser()
+	user := LoginAndGetMockUser()
 
 	requestBody := map[string]interface{}{
-		"uid":                user.Uid,
-		"refreshToken":       user.RefreshToken,
-		"refreshTokenExpiry": user.RefreshTokenExpiry,
+		"uid":                user.Data.Uid,
+		"refreshToken":       user.Data.RefreshToken,
+		"refreshTokenExpiry": user.Data.RefreshTokenExpiry,
 	}
-	res, err, _ := reqres.HttpRequest("POST", requestBody, "Auth/refresh-token", "")
-
+	res, err, _ := reqres.HttpRequest("POST", requestBody, "Auth/access-token", "")
 	check_error.ErrCheck(err)
-	accessToken := string(res)
-	fmt.Println("Acess token: ", accessToken)
-	return accessToken
+	var tokenRes BaseResponse[string]
+	_ = json.Unmarshal(res, &tokenRes)
+	token := tokenRes.Data
+	fmt.Println("Acess token: ", token)
+	return token
 }
 
 func GetRefreshToken() string {
@@ -43,16 +50,22 @@ func GetRefreshToken() string {
 	return "hello access token"
 }
 
-func LoginAndGetMockUser() AuthUser {
-	var user AuthUser
+func LoginAndGetMockUser() BaseResponse[AuthUser] {
+	fmt.Println("Enter user name")
+	username, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	fmt.Println("Enter user password")
+	userPasssword, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	var user BaseResponse[AuthUser]
 	requestBody := map[string]interface{}{
-		"username": "string0",
-		"password": "string",
+		"username": username,
+		"password": userPasssword,
 	}
 	res, err, _ := reqres.HttpRequest("POST", requestBody, "Auth/login", "")
 	check_error.ErrCheck(err)
-	err = json.Unmarshal(res, &user)
-	fmt.Println("refresh token: ", user.RefreshToken)
+	_ = json.Unmarshal(res, &user)
+	fmt.Println("refresh token: ", user.Data.RefreshToken)
 	return user
 }
 
@@ -65,18 +78,18 @@ func TestAPI() {
 	fmt.Println("Test response: ", testString)
 }
 
-func RegisterMockUser(db *sql.DB) AuthUser {
-	var count int
-	_ = db.QueryRow(`select count(*) from Users`).Scan(&count)
-
-	fmt.Println(count)
-	mockEmail := "test" + strconv.Itoa(count) + "@test.com"
-	mockUsername := "string" + strconv.Itoa(count)
+func RegisterUser() AuthUser {
+	fmt.Println("Enter user name")
+	username, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	fmt.Println("Enter user email")
+	userEmail, err := util.GetUserInput()
+	check_error.ErrCheck(err)
 	var user AuthUser
 	requestBody := map[string]interface{}{
-		"email":     mockEmail,
+		"email":     userEmail,
 		"photoUrl":  "string",
-		"username":  mockUsername,
+		"username":  username,
 		"firstName": "string",
 		"lastName":  "string",
 		"password":  "string",
@@ -85,19 +98,35 @@ func RegisterMockUser(db *sql.DB) AuthUser {
 	check_error.ErrCheck(err)
 	resString := string(res)
 	fmt.Println("Response body: ", resString)
-	err = json.Unmarshal(res, &user)
+	_ = json.Unmarshal(res, &user)
+	fmt.Println("Created user with username: ", user.Username)
+	fmt.Println("Check your mail")
+	return user
+}
+
+func CreateUser() AuthUser {
+	fmt.Println("Enter token")
+	token, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	requestBody := map[string]interface{}{
+		"token": token,
+	}
+	res, err, _ := reqres.HttpRequest("POST", requestBody, "Auth/create-user", "")
+	check_error.ErrCheck(err)
+	var user AuthUser
+	_ = json.Unmarshal(res, &user)
 	fmt.Println("Created user with username: ", user.Username)
 	return user
 }
 
 func RegisterMultipleMockUsers(db *sql.DB) {
 	fmt.Println("How many mock users would you like to add")
-	//Read input
+	// Read input
 	var amount int
 	for {
 		input, err := util.GetUserInput()
 		check_error.ErrCheck(err)
-		//check if input matches an int value
+		// check if input matches an int value
 		numberreg := regexp.MustCompile(`\d`)
 		if !numberreg.MatchString(input) {
 			fmt.Println("Please add a valid number")
@@ -109,8 +138,8 @@ func RegisterMultipleMockUsers(db *sql.DB) {
 		}
 
 	}
-	//register mock user
+	// register mock user
 	for i := 0; i < amount; i++ {
-		RegisterMockUser(db)
+		RegisterUser()
 	}
 }
