@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	accounts "paymates-mock-db-updater/src/accounts"
 	"paymates-mock-db-updater/src/auth"
 	"paymates-mock-db-updater/src/check_error"
 	"paymates-mock-db-updater/src/friends"
@@ -48,6 +49,8 @@ func main() {
 			users.GetAllUsers(db)
 		case "register user":
 			auth.RegisterUser()
+		case "update user":
+			users.UpdateUser()
 		case "register multiple mock users":
 			auth.RegisterMultipleMockUsers(db)
 		case "get refresh token":
@@ -68,7 +71,7 @@ func main() {
 		case "delete friend":
 			friends.DeleteFriend(db)
 		case "get user friends":
-			friends.GetUserFriends(db)
+			friends.GetUserFriends()
 		case "find friend":
 			friends.FindFriend()
 		case "test auth":
@@ -87,6 +90,10 @@ func main() {
 			transactions.GetAllTransactions(db)
 		case "delete transaction":
 			transactions.DeleteTransAction()
+		case "print slice":
+			transactions.PrintArray()
+		case "remove account":
+			accounts.DeleteAccount()
 		default:
 			fmt.Println("OOPS!! ", input, " is not an avaiible command")
 			printAvailibleCommands()
@@ -97,10 +104,10 @@ func main() {
 func printAvailibleCommands() {
 	fmt.Println("AVAILIBLE COMMANDS:")
 	fmt.Println("==========================================")
-	fmt.Println("get users; truncate users; create mock users; register multiple mock users; register user; get number of users; login user")
+	fmt.Println("get users; truncate users; create mock users; register multiple mock users; register user; get number of users; login user; update user;")
 	fmt.Println("get refresh token; get access token; create user")
 	fmt.Println("create transaction; get all transactions from db; delete transaction")
 	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend; get user friends; find friend")
+	fmt.Println("remove account")
 	fmt.Println("==========================================")
 }
-

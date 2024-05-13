@@ -33,10 +33,15 @@ func GetAllFriends(db *sql.DB) {
 	}
 }
 
-func GetUserFriends(db *sql.DB) {
-	requestBody := map[string]interface{}{}
+func GetUserFriends() {
+	fmt.Println("Enter username")
+	username, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	requestBody := map[string]interface{}{
+		"username": username,
+	}
 	token := auth.GetAccessToken()
-	res, err, _ := reqres.HttpRequest("GET", requestBody, "Friends/get-friends", token)
+	res, err, _ := reqres.HttpRequest("POST", requestBody, "Friends/get-friends", token)
 	check_error.ErrCheck(err)
 	resStr := string(res)
 	fmt.Println("Friend Response: ", resStr)
