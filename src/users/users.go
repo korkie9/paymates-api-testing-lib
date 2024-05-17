@@ -1,11 +1,17 @@
 package users
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"os"
 	"paymates-mock-db-updater/src/auth"
 	"paymates-mock-db-updater/src/check_error"
 	reqres "paymates-mock-db-updater/src/httpRequest"
+	env "paymates-mock-db-updater/src/util/env"
 	util "paymates-mock-db-updater/src/util/get_input"
 	truncate "paymates-mock-db-updater/src/util/truncate"
 
@@ -121,4 +127,61 @@ func Test() {
 	check_error.ErrCheck(err)
 	resStr := string(res)
 	fmt.Println("Test Friend Response: ", resStr)
+}
+
+func UploadPhoto() {
+	filePath := "/home/justin/Pictures/profile.jpeg" // Path to your sample image file
+
+	token := auth.GetAccessToken()
+	file, err := os.Open(filePath)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return
+	}
+	defer file.Close()
+
+	// Create a new HTTP POST request to the endpoint
+	url := env.DotEnvVariable("API_URL") + "User/upload-photo"
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("file", filePath)
+	if err != nil {
+		fmt.Println("Error creating form file:", err)
+		return
+	}
+	_, err = io.Copy(part, file)
+	if err != nil {
+		fmt.Println("Error copying file data:", err)
+		return
+	}
+	err = writer.Close()
+	if err != nil {
+		fmt.Println("Error closing writer:", err)
+		return
+	}
+
+	// Make the request
+	req, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("Authorization", "Bearer "+token)
+	fmt.Println("loggign request body: ", req)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error making request:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Print the response status code and body
+	fmt.Println("Response Status:", resp.Status)
+	fmt.Println("Response Body:")
+	_, err = io.Copy(os.Stdout, resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+	}
 }

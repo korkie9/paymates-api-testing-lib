@@ -94,6 +94,8 @@ func main() {
 			transactions.PrintArray()
 		case "remove account":
 			accounts.DeleteAccount()
+		case "upload photo":
+			users.UploadPhoto()
 		default:
 			fmt.Println("OOPS!! ", input, " is not an avaiible command")
 			printAvailibleCommands()
@@ -104,7 +106,7 @@ func main() {
 func printAvailibleCommands() {
 	fmt.Println("AVAILIBLE COMMANDS:")
 	fmt.Println("==========================================")
-	fmt.Println("get users; truncate users; create mock users; register multiple mock users; register user; get number of users; login user; update user;")
+	fmt.Println("upload photo; get users; truncate users; create mock users; register multiple mock users; register user; get number of users; login user; update user;")
 	fmt.Println("get refresh token; get access token; create user")
 	fmt.Println("create transaction; get all transactions from db; delete transaction")
 	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend; get user friends; find friend")
