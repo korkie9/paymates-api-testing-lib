@@ -9,7 +9,13 @@ import (
 	util "paymates-mock-db-updater/src/util/get_input"
 	truncate "paymates-mock-db-updater/src/util/truncate"
 
+	"bytes"
 	_ "github.com/go-sql-driver/mysql"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"os"
+	env "paymates-mock-db-updater/src/util/env"
 )
 
 type User struct {
@@ -87,4 +93,77 @@ func Test() {
 	check_error.ErrCheck(err)
 	resStr := string(res)
 	fmt.Println("Test Friend Response: ", resStr)
+}
+
+func UploadPhoto() error {
+	fmt.Println("Enter the file path")
+	filePath, err := util.GetUserInput()
+	check_error.ErrCheck(err)
+	// Open the file to upload
+
+	file, err := os.Open(filePath)
+	check_error.ErrCheck(err)
+	defer file.Close()
+
+	token := auth.GetAccessToken()
+	var url = env.DotEnvVariable("API_URL")
+	// Create a buffer to write the form data
+	var requestBody bytes.Buffer
+	writer := multipart.NewWriter(&requestBody)
+
+	// Create the form file field
+	part, err := writer.CreateFormFile("file", filePath)
+	if err != nil {
+		return fmt.Errorf("could not create form file: %v", err)
+	}
+
+	// Copy the file into the form file field
+	_, err = io.Copy(part, file)
+	if err != nil {
+		return fmt.Errorf("could not copy file: %v", err)
+	}
+
+	// Close the writer to set the terminating boundary
+	err = writer.Close()
+	if err != nil {
+		return fmt.Errorf("could not close writer: %v", err)
+	}
+
+	// Create a new POST request
+	req, err := http.NewRequest("POST", url, &requestBody)
+	if err != nil {
+		return fmt.Errorf("could not create request: %v", err)
+	}
+
+	// Set the Content-Type header to multipart/form-data with the boundary from the writer
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	// Optionally set additional headers such as authorization if needed
+	// req.Header.Set("Authorization", "Bearer <your-token>")
+
+	// Perform the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("could not send request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	responseBody, err := io.ReadAll(resp.Body)
+	check_error.ErrCheck(err)
+	resStr := string(responseBody)
+	fmt.Println("Friend Response: ", resStr)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("bad response status: %s", resp.Status)
+	}
+
+	// Optionally, read the response body if needed
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("could not read response body: %v", err)
+	}
+	fmt.Println(string(body))
+
+	return nil
 }

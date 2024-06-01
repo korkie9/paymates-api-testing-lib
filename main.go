@@ -48,6 +48,8 @@ func main() {
 			users.GetAllUsers(db)
 		case "register user":
 			auth.RegisterUser()
+		case "upload photo":
+			users.UploadPhoto()
 		case "register multiple mock users":
 			auth.RegisterMultipleMockUsers(db)
 		case "get refresh token":
@@ -97,10 +99,9 @@ func main() {
 func printAvailibleCommands() {
 	fmt.Println("AVAILIBLE COMMANDS:")
 	fmt.Println("==========================================")
-	fmt.Println("get users; truncate users; create mock users; register multiple mock users; register user; get number of users; login user")
+	fmt.Println("get users; truncate users; create mock users; register multiple mock users; register user; get number of users; login user; upload photo")
 	fmt.Println("get refresh token; get access token; create user")
 	fmt.Println("create transaction; get all transactions from db; delete transaction")
 	fmt.Println("get all friends in db; create mock friends; add friend; truncate friends; delete friend; get user friends; find friend")
 	fmt.Println("==========================================")
 }
-

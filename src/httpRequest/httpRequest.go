@@ -24,6 +24,7 @@ func HttpRequest(requesttype string, requestbody map[string]interface{}, path st
 	requestBody := bytes.NewBuffer(postBody)
 	req, err := http.NewRequest(requesttype, util.DotEnvVariable("API_URL")+path, requestBody)
 
+	fmt.Println(util.DotEnvVariable("API_URL") + path)
 	check_error.ErrCheck(err)
 
 	req.Header.Set("Content-Type", "application/json")
